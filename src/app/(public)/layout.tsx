@@ -1,6 +1,7 @@
 import { UserProvider } from "@/context/UserContext";
 import type { Metadata } from "next";
-import "./globals.css";
+import Navbar from "@/components/shared/Navbar";
+import "../globals.css";
 
 export const metadata: Metadata = {
   title: "Kantina",
@@ -19,6 +20,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col font-sans">
         <UserProvider>
+          <Navbar />
           <main className="flex-1 flex flex-col">{children}</main>
         </UserProvider>
       </body>

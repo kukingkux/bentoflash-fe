@@ -1,33 +1,40 @@
-export interface CatalogItem {
+// Role Mapping Types
+export type BackendRole = "CUSTOMER" | "KITCHEN_STAFF" | "SYSTEM_ADMIN";
+export type UserRole = "customer" | "kitchen_staff" | "admin" | null;
+
+export interface UserSession {
+  userId: number;
+  username: string;
+  role: UserRole;
+  karmaScore: number;
+}
+
+// Polymorphic Catalog Items
+export interface BaseCatalogItem {
+  skuCode: string;
   name: string;
   basePrice: number;
-  skuCode: string;
   currentPrice: number;
+  packagingType: string;
 }
 
-export interface LocalCultureBento extends CatalogItem {
+export interface LocalCultureBento extends BaseCatalogItem {
   calorieCount: number;
-  ingredients: string[];
 }
 
-export interface GrabAndGoBeverage extends CatalogItem {
+export interface GrabAndGoBeverage extends BaseCatalogItem {
   isRefrigerated: boolean;
 }
 
+export type CatalogItem = LocalCultureBento | GrabAndGoBeverage;
+
+// Order and Queue structures
 export type OrderStatus = "PENDING" | "READY" | "CLAIMED" | "GHOSTED";
 
-export interface Order {
-  orderId: string;
-  pickupCode: string;
-  isPickedUp: boolean;
+export interface OrderResponse {
+  orderId: number;
+  skuCode: string;
   status: OrderStatus;
-  items: CatalogItem[];
-  orderTime: string;
-}
-
-export interface User {
-  userId: string;
-  username: string;
-  karmaScore: number;
-  role: "CUSTOMER" | "KITCHEN_STAFF" | "SYSTEM_ADMIN";
+  isPickedUp: boolean;
+  pickupCode: string | null;
 }
