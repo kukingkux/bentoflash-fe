@@ -3,6 +3,7 @@ import { Status } from "@/components/shared/Status";
 
 const menuItems = [
   {
+    menuId: "DC-001",
     skuCode: "TT-BNTO-RENDANG-01",
     name: "Nasi Padang Rendang",
     category: "Main Course",
@@ -10,6 +11,7 @@ const menuItems = [
     availability: "Available" as const,
   },
   {
+    menuId: "DC-001",
     skuCode: "TT-BVG-ESTEH-02",
     name: "Es Teh Manis",
     category: "Beverage",
@@ -17,6 +19,7 @@ const menuItems = [
     availability: "Limited" as const,
   },
   {
+    menuId: "DC-001",
     skuCode: "TT-MIX-AYAM-03",
     name: "Paket Ayam",
     category: "Combo",
