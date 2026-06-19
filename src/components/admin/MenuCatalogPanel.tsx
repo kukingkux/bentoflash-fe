@@ -26,12 +26,15 @@ export function MenuCatalogPanel({title = "Menu", items }: MenuCatalogPanelProps
             </div>
             <div className="w-full h-148 mt-6 space-y-3 flex flex-col items-start gap-4 px-8 py-6 rounded-3xl border border-[#E0E0E0] bg-[#FAFAFA] shadow-[0_3px_4.3px_rgba(0,0,0,0.02)] backdrop-blur-xl">
                 <div className="flex w-full justify-between gap-auto">
-                    <div className="flex w-56 flex-start border rounded-full border-border-subtle">
+                    <div className="flex w-82 flex-start border rounded-full border-border-subtle">
                         <div className="flex flex-1 py-1 justify-center items-center bg-text-primary text-white rounded-full">
                             <p>All</p>
                         </div>
                         <div className="flex flex-1 py-1 justify-center items-center rounded-full text-text-caption">
-                            <p>Active</p>
+                            <p>Kantin DC</p>
+                        </div>
+                        <div className="flex flex-1 py-1 justify-center items-center rounded-full text-text-caption">
+                            <p>Kantin TT</p>
                         </div>
                     </div>
                     <div className="flex w-48 px-2 gap-1 justify-start items-center border border-border-subtle rounded-full text-text-caption">
