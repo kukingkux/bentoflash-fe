@@ -5,6 +5,7 @@ import {
   type KitchenOrder,
   type MenuPayload,
   type UserProfile,
+  type UserResponse,
 } from "@/utils/api";
 import { useEffect, useState } from "react";
 
@@ -31,9 +32,13 @@ export function useCatalog() {
     }
   };
 
-  const handleReserve = async (skuCode: string, userId: number = 1) => {
+  const handleReserve = async (
+    skuCode: string,
+    quantity: number = 1,
+    userId: number = 1,
+  ) => {
     try {
-      const res = await api.reserveBento({ userId, skuCode, quantity: 1 });
+      const res = await api.reserveBento({ userId, skuCode, quantity });
       setLatestPickupCode(res.pickupCode);
       return res;
     } catch (err) {
@@ -147,6 +152,35 @@ export function useKitchenQueue(autoPollMs: number = 5000) {
   return { queue, loading, fetchQueue };
 }
 
+export function useCustomerOrders() {
+  const [isConfirming, setIsConfirming] = useState(false);
+
+  const handleConfirmPickup = async (
+    orderId: number,
+    onSuccess?: () => void,
+  ) => {
+    setIsConfirming(true);
+    try {
+      const response = await api.confirmPickup(orderId);
+
+      // Opsional: Tampilkan notifikasi sukses atau perubahan Karma Poin
+      console.log("Pickup Confirmed!", response.message);
+      if (response.newKarmaScore !== undefined) {
+        console.log(`Skor Karma Anda sekarang: ${response.newKarmaScore}`);
+      }
+
+      // Trigger refresh data jika ada (misal me-refresh list pesanan aktif)
+      if (onSuccess) onSuccess();
+    } catch (error: any) {
+      alert(`Gagal: ${error.message}`);
+    } finally {
+      setIsConfirming(false);
+    }
+  };
+
+  return { handleConfirmPickup, isConfirming };
+}
+
 // 3. Modul Elfan (Time Leap / Cron)
 export function useFlashDiscount() {
   const [isTriggering, setIsTriggering] = useState(false);
@@ -215,3 +249,27 @@ export function useKarmaSystem(initialUserId: number = 1) {
 
   return { user, applyPenalty, isPenalizing, isUserLoading };
 }
+
+export function useUsers() {
+  const [users, setUsers] = useState<UserResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const data = await api.getAllUsers();
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void fetchUsers();
+  }, []);
+
+  return { users, loading, fetchUsers };
+}
+

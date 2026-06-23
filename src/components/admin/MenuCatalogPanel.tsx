@@ -5,6 +5,7 @@ import { Input } from "@/components/shared/Input";
 import { useCatalog } from "@/hooks/useAdminLogic";
 import { CatalogItem, MenuPayload } from "@/utils/api";
 import { Status } from "../shared/Status";
+import EditMenuModal from "./EditMenuModal";
 
 interface MenuCatalogPanelProps {
   title?: string;
@@ -344,7 +345,7 @@ function QueueRow({ item }: { item: CatalogItem }) {
       </div>
       <div className="flex w-28 justify-start items-center gap-2">
         <button
-          onClick={() => handleReserve(item.skuCode)}
+          onClick={() => setEditingItem(item)}
           className="flex items-center p-1 bg-white border rounded-sm border-border-subtle"
         >
           <span className="material-symbols-outlined p-0">edit</span>
@@ -356,12 +357,22 @@ function QueueRow({ item }: { item: CatalogItem }) {
           <span className="material-symbols-outlined p-0">delete</span>
         </button>
         <button
-          onClick={() => setEditingItem(item)}
+          onClick={() => handleReserve(item.skuCode)}
           className="flex items-center p-1 bg-white border rounded-sm border-border-subtle"
         >
           <span className="material-symbols-outlined p-0">hand_meal</span>
         </button>
       </div>
+
+      {editingItem && (
+        <EditMenuModal
+          item={editingItem}
+          isOpen={!!editingItem}
+          onClose={() => setEditingItem(null)}
+          onSave={handleEditMenu}
+          isSubmitting={isSubmitting}
+        />
+      )}
     </article>
   );
 }

@@ -44,6 +44,14 @@ export interface UserProfile {
   karmaScore: number;
 }
 
+export interface UserResponse {
+  userId: number;
+  name: string;
+  email: string;
+  karmaScore: number;
+  loyaltyStatus: string;
+}
+
 // Fetchers
 export const api = {
   getUserProfile: async (userId: number): Promise<UserProfile> => {
@@ -51,6 +59,13 @@ export const api = {
       cache: "no-store",
     });
     if (!res.ok) throw new Error("Failed to fetch user profile");
+    return res.json();
+  },
+  getAllUsers: async (): Promise<UserResponse[]> => {
+    const res = await fetch(`${BASE_URL}/api/admin/system/users`, {
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error("Failed to fetch all users");
     return res.json();
   },
   getCatalog: async (): Promise<CatalogItem[]> => {
@@ -140,6 +155,25 @@ export const api = {
       { method: "PUT" },
     );
     if (!res.ok) throw new Error("Failed to process penalty");
+    return res.json();
+  },
+  confirmPickup: async (
+    orderId: number,
+  ): Promise<{ status: string; message: string; newKarmaScore?: number }> => {
+    // Sesuaikan URL ini dengan rute Controller Spring Boot kalian (misal: BentoMarketController)
+    const res = await fetch(
+      `${BASE_URL}/api/bento-market/orders/${orderId}/pickup`,
+      {
+        method: "PUT",
+      },
+    );
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(
+        errorData.error || "Gagal mengonfirmasi pengambilan pesanan",
+      );
+    }
     return res.json();
   },
 };

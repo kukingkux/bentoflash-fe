@@ -109,7 +109,7 @@ export default function TimeLeapTriggerPage() {
               </div>
               <div className="flex gap-8">
                 <div className="flex gap-4 items-center">
-                  <div className="flex items-center p-2 bg-border-subtle border border-slate-800 rounded-xl font-mono text-xs text-slate-500">
+                  <div className="flex items-center p-2 bg-border-subtle border border-slate-800 rounded-xl font-mono text-xs text-text-primary">
                     <Input
                       ref={(el) => {
                         inputRefs.current[0] = el;
@@ -121,7 +121,7 @@ export default function TimeLeapTriggerPage() {
                       maxLength={1}
                     />{" "}
                   </div>
-                  <div className="flex items-center p-2 bg-border-subtle border border-slate-800 rounded-xl font-mono text-xs text-slate-500">
+                  <div className="flex items-center p-2 bg-border-subtle border border-slate-800 rounded-xl font-mono text-xs text-text-primary">
                     <Input
                       ref={(el) => {
                         inputRefs.current[1] = el;
@@ -134,7 +134,7 @@ export default function TimeLeapTriggerPage() {
                     />{" "}
                   </div>
                   <div className="text-6xl">:</div>
-                  <div className="flex items-center p-2 bg-border-subtle border border-slate-800 rounded-xl font-mono text-xs text-slate-500">
+                  <div className="flex items-center p-2 bg-border-subtle border border-slate-800 rounded-xl font-mono text-xs text-text-primary">
                     <Input
                       ref={(el) => {
                         inputRefs.current[2] = el;
@@ -146,7 +146,7 @@ export default function TimeLeapTriggerPage() {
                       maxLength={1}
                     />{" "}
                   </div>
-                  <div className="flex items-center p-2 bg-border-subtle border border-slate-800 rounded-xl font-mono text-xs text-slate-500">
+                  <div className="flex items-center p-2 bg-border-subtle border border-slate-800 rounded-xl font-mono text-xs text-text-primary">
                     <Input
                       ref={(el) => {
                         inputRefs.current[3] = el;

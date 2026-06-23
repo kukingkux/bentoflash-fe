@@ -1,4 +1,5 @@
 import { Button } from "@/components/shared/Button";
+import { useCustomerOrders } from "@/hooks/useAdminLogic";
 import { cn } from "@/lib/cn";
 import type { CatalogItem, OrderStatus } from "@/types";
 
@@ -46,6 +47,7 @@ export function CustomerDashboard({
   onAddToCart,
   onClaimOrder,
 }: CustomerDashboardProps) {
+  const { handleConfirmPickup, isConfirming } = useCustomerOrders();
   const readyCount = orders.filter((order) => order.status === "READY").length;
   const pendingCount = orders.filter((order) => order.status === "PENDING").length;
   const totalValue = catalogItems.reduce(
@@ -209,7 +211,13 @@ export function CustomerDashboard({
                       ) : null}
                     </div>
                     {order.status === "READY" && !order.isPickedUp ? (
-                      <Button variant="success" size="sm" className="mt-4 w-full">
+                      <Button 
+                        variant="success" 
+                        size="sm" 
+                        className="mt-4 w-full"
+                        onClick={() => handleConfirmPickup(order.orderId, () => onClaimOrder?.(order.orderId))}
+                        disabled={isConfirming}
+                      >
                         Claim order
                       </Button>
                     ) : null}

@@ -1,13 +1,27 @@
+"use client";
+
 /* eslint-disable @next/next/no-img-element */
 import { Oranienbaum } from "next/font/google";
 
+import { useState } from "react";
+
 import { Button } from "@/components/shared/Button";
+import { useCatalog } from "@/hooks/useAdminLogic";
 import { cn } from "@/lib/cn";
+import { type CatalogItem } from "@/utils/api";
 
 const oranienbaum = Oranienbaum({
   subsets: ["latin"],
   weight: "400",
 });
+
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
 
 const assets = {
   image8:
@@ -30,256 +44,62 @@ const assets = {
     "https://www.figma.com/api/mcp/asset/a48e9291-c197-4bd4-acf3-e1a2642bd8de",
 };
 
-type ProductCardData = {
-  title: string;
-  subtitle: string;
-  location: string;
-  originalPrice?: string;
-  finalPrice: string;
-  image: string;
-};
-
-type CartItemData = {
-  title: string;
-  location: string;
-  notes: string;
-  originalPrice: string;
-  finalPrice: string;
-  image: string;
-};
-
-const hotOffers: ProductCardData[] = [
-  {
-    title: "Nasi Padang",
-    subtitle: "Beef rendang, spinach, sambal",
-    location: "Kantin Gedung TT",
-    originalPrice: "Rp 20000",
-    finalPrice: "Rp 16000",
-    image: assets.image17,
-  },
-  {
-    title: "Chicken Katsu",
-    subtitle: "Breadcrumb fried chicken",
-    location: "Kantin Gedung DC",
-    finalPrice: "Rp 15000",
-    image: assets.image16,
-  },
-  {
-    title: "Coffee Latte",
-    subtitle: "Classic Latte Hot/Iced",
-    location: "Kantin Gedung TT",
-    originalPrice: "Rp 8000",
-    finalPrice: "Rp 6000",
-    image: assets.image18,
-  },
-  {
-    title: "Nasi Padang",
-    subtitle: "Beef rendang, spinach, sambal",
-    location: "Kantin Gedung TT",
-    originalPrice: "Rp 20000",
-    finalPrice: "Rp 16000",
-    image: assets.image17,
-  },
-];
-
-const forYou: ProductCardData[] = [
-  {
-    title: "Chicken Katsu",
-    subtitle: "Breadcrumb fried chicken",
-    location: "Kantin Gedung DC",
-    finalPrice: "Rp 15000",
-    image: assets.image16,
-  },
-  {
-    title: "Nasi Padang",
-    subtitle: "Beef rendang, spinach, sambal",
-    location: "Kantin Gedung TT",
-    originalPrice: "Rp 20000",
-    finalPrice: "Rp 16000",
-    image: assets.image17,
-  },
-  {
-    title: "Coffee Latte",
-    subtitle: "Classic Latte Hot/Iced",
-    location: "Kantin Gedung TT",
-    originalPrice: "Rp 8000",
-    finalPrice: "Rp 6000",
-    image: assets.image18,
-  },
-  {
-    title: "Chicken Katsu",
-    subtitle: "Breadcrumb fried chicken",
-    location: "Kantin Gedung DC",
-    finalPrice: "Rp 15000",
-    image: assets.image16,
-  },
-];
-
-const beverages: ProductCardData[] = [
-  {
-    title: "Coffee Latte",
-    subtitle: "Classic Latte Hot/Iced",
-    location: "Kantin Gedung TT",
-    originalPrice: "Rp 8000",
-    finalPrice: "Rp 6000",
-    image: assets.image18,
-  },
-  {
-    title: "Coffee Latte",
-    subtitle: "Classic Latte Hot/Iced",
-    location: "Kantin Gedung TT",
-    originalPrice: "Rp 8000",
-    finalPrice: "Rp 6000",
-    image: assets.image18,
-  },
-];
-
-const snacks: ProductCardData[] = [
-  {
-    title: "Chicken Katsu",
-    subtitle: "Breadcrumb fried chicken",
-    location: "Kantin Gedung DC",
-    finalPrice: "Rp 15000",
-    image: assets.image16,
-  },
-  {
-    title: "Nasi Padang",
-    subtitle: "Beef rendang, spinach, sambal",
-    location: "Kantin Gedung TT",
-    originalPrice: "Rp 20000",
-    finalPrice: "Rp 16000",
-    image: assets.image17,
-  },
-];
-
-const cartItems: CartItemData[] = [
-  {
-    title: "Nasi Ayam Geprek",
-    location: "Kantin Gedung DC",
-    notes: "Cabai 2",
-    originalPrice: "Rp 16000",
-    finalPrice: "Rp 12000",
-    image: assets.image19,
-  },
-  {
-    title: "Es Teh",
-    location: "Kantin Gedung DC",
-    notes: "-",
-    originalPrice: "Rp 4000",
-    finalPrice: "Rp 3000",
-    image: assets.image20,
-  },
-  {
-    title: "Nasi Ayam Geprek",
-    location: "Kantin Gedung DC",
-    notes: "Cabai 2",
-    originalPrice: "Rp 16000",
-    finalPrice: "Rp 12000",
-    image: assets.image19,
-  },
-];
-
-function ProductCard({
-  image,
-  title,
-  subtitle,
-  location,
-  originalPrice,
-  finalPrice,
-}: ProductCardData) {
-  return (
-    <article className="w-[272px] shrink-0 rounded-[16px] bg-[#fafafa] p-2 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
-      <div className="relative h-48 overflow-hidden rounded-[12px] bg-[#aeaeae]">
-        <img
-          alt={title}
-          className="absolute inset-0 h-full w-full object-cover"
-          src={image}
-        />
-      </div>
-      <div className="rounded-[12px] px-3 py-2">
-        <div className="space-y-4">
-          <div className="space-y-1">
-            <h3 className={cn(oranienbaum.className, "text-[20px] text-[#1f1f1f]")}>
-              {title}
-            </h3>
-            <p className="text-[14px] text-[#5f5f5f]">{subtitle}</p>
-          </div>
-          <div className="flex items-center gap-1 text-[#5f5f5f]">
-            <span className="icon-light material-symbols-outlined text-[24px]">location_on</span>
-            <p className="text-[14px] font-medium">{location}</p>
-          </div>
-        </div>
-        <div className="mt-6 flex items-end justify-between gap-4">
-          <div>
-            {originalPrice ? (
-              <p className="text-[10px] font-semibold text-[#5f5f5f] line-through">
-                {originalPrice}
-              </p>
-            ) : null}
-            <p className="mt-0.5 text-[20px] font-semibold text-[#1f1f1f]">
-              {finalPrice}
-            </p>
-          </div>
-          <Button
-            className="min-h-0 rounded-[24px] px-4 py-1.5 text-[14px]"
-            endIcon={<span className="icon-light material-symbols-outlined text-[20px]">add</span>}
-            size="sm"
-          >
-            Add to cart
-          </Button>
-        </div>
-      </div>
-    </article>
-  );
-}
+type CartStateItem = CatalogItem & { quantity: number; image: string; notes: string; location: string };
 
 function CartItem({
-  image,
-  title,
-  location,
-  notes,
-  originalPrice,
-  finalPrice,
-}: CartItemData) {
+  item,
+  onUpdateQuantity,
+  onRemove,
+}: {
+  item: CartStateItem;
+  onUpdateQuantity: (skuCode: string, delta: number) => void;
+  onRemove: (skuCode: string) => void;
+}) {
   return (
     <article className="flex items-start gap-2">
       <img
-        alt={title}
+        alt={item.name}
         className="h-16 w-16 rounded-[12px] object-cover"
-        src={image}
+        src={item.image}
       />
       <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
         <div className="space-y-3">
           <div className="space-y-1">
             <div className="flex items-center gap-1 text-[#5f5f5f]">
-              <span className="icon-light material-symbols-outlined text-[20px]">location_on</span>
-              <p className="text-[12px]">{location}</p>
+              <span className="icon-light material-symbols-outlined text-[20px]">
+                location_on
+              </span>
+              <p className="text-[12px]">{item.location}</p>
             </div>
-            <h3 className="text-[16px] font-medium text-[#1f1f1f]">{title}</h3>
+            <h3 className="text-[16px] font-medium text-[#1f1f1f]">{item.name}</h3>
             <p className="text-[12px] italic text-[#5f5f5f]">
-              Notes: <span className="not-italic text-[#1f1f1f]">{notes}</span>
+              Notes: <span className="not-italic text-[#1f1f1f]">{item.notes}</span>
             </p>
           </div>
-          <div className="inline-flex items-center overflow-hidden rounded-[8px] border border-[#eeeeee]">
-            <button className="flex h-[19px] w-5 items-center justify-center text-[#5f5f5f]">
+          <div className="inline-flex items-center overflow-hidden rounded-[8px] border-[#eeeeee] border">
+            <button onClick={() => onUpdateQuantity(item.skuCode, -1)} className="flex h-[19px] w-5 items-center justify-center text-[#5f5f5f]">
               -
             </button>
             <span className="flex h-[19px] items-center justify-center border-x border-[#eeeeee] px-4 text-[14px] text-[#1f1f1f]">
-              1
+              {item.quantity}
             </span>
-            <button className="flex h-[19px] w-5 items-center justify-center text-[#5f5f5f]">
+            <button onClick={() => onUpdateQuantity(item.skuCode, 1)} className="flex h-[19px] w-5 items-center justify-center text-[#5f5f5f]">
               +
             </button>
           </div>
         </div>
         <div className="flex flex-col items-end justify-between gap-4 self-stretch">
-          <button className="text-[14px] font-medium text-[#f45d0c]">Edit</button>
+          <button onClick={() => onRemove(item.skuCode)} className="text-[14px] font-medium text-[#f45d0c]">
+            Remove
+          </button>
           <div className="text-right">
-            <p className="text-[10px] font-semibold text-[#5f5f5f] line-through">
-              {originalPrice}
-            </p>
+            {item.discountApplied ? (
+              <p className="text-[10px] font-semibold text-[#5f5f5f] line-through">
+                {formatCurrency(item.basePrice * item.quantity)}
+              </p>
+            ) : null}
             <p className="mt-1 text-[14px] font-semibold text-[#1f1f1f]">
-              {finalPrice}
+              {formatCurrency(item.currentPrice * item.quantity)}
             </p>
           </div>
         </div>
@@ -288,37 +108,72 @@ function CartItem({
   );
 }
 
-function ProductSection({
-  title,
-  products,
-  showRail = false,
-}: {
-  title: string;
-  products: ProductCardData[];
-  showRail?: boolean;
-}) {
-  return (
-    <section className="space-y-6">
-      <h2 className={cn(oranienbaum.className, "text-[40px] text-[#1f1f1f]")}>
-        {title}
-      </h2>
-      <div className="overflow-x-auto pb-3">
-        <div className="flex min-w-max gap-4">
-          {products.map((product) => (
-            <ProductCard key={`${title}-${product.title}-${product.finalPrice}`} {...product} />
-          ))}
-        </div>
-      </div>
-      {showRail ? (
-        <div className="hidden h-[3px] rounded-full bg-[#e2e2e2] lg:block">
-          <div className="h-full w-[65%] rounded-full bg-[#f45d0c]" />
-        </div>
-      ) : null}
-    </section>
-  );
-}
-
 export default function HomePage() {
+  const { items, loading, handleReserve } = useCatalog();
+  const [cart, setCart] = useState<CartStateItem[]>([]);
+  const [isConfirming, setIsConfirming] = useState(false);
+
+  const addToCart = (item: CatalogItem) => {
+    setCart((prev) => {
+      const existing = prev.find((i) => i.skuCode === item.skuCode);
+      if (existing) {
+        return prev.map((i) =>
+          i.skuCode === item.skuCode ? { ...i, quantity: i.quantity + 1 } : i
+        );
+      }
+      return [
+        ...prev,
+        {
+          ...item,
+          quantity: 1,
+          image: assets.image19,
+          notes: "-",
+          location: "Kantin Gedung TT",
+        },
+      ];
+    });
+  };
+
+  const updateQuantity = (skuCode: string, delta: number) => {
+    setCart((prev) =>
+      prev
+        .map((item) => {
+          if (item.skuCode === skuCode) {
+            const newQuantity = Math.max(0, item.quantity + delta);
+            return { ...item, quantity: newQuantity };
+          }
+          return item;
+        })
+        .filter((item) => item.quantity > 0)
+    );
+  };
+
+  const removeCartItem = (skuCode: string) => {
+    setCart((prev) => prev.filter((item) => item.skuCode !== skuCode));
+  };
+
+  const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const normalPriceTotal = cart.reduce((sum, item) => sum + item.basePrice * item.quantity, 0);
+  const finalTotal = cart.reduce((sum, item) => sum + item.currentPrice * item.quantity, 0);
+  const discountTotal = normalPriceTotal - finalTotal;
+
+  const handleConfirmOrder = async () => {
+    if (cart.length === 0) return;
+    setIsConfirming(true);
+    try {
+      for (const item of cart) {
+        await handleReserve(item.skuCode, item.quantity);
+      }
+      setCart([]);
+      alert("Order confirmed!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to confirm order.");
+    } finally {
+      setIsConfirming(false);
+    }
+  };
+
   return (
     <main className="relative min-h-[calc(100vh-85px)] overflow-hidden bg-[#f0f0f0]">
       <div className="mx-auto flex max-w-[1440px] gap-8 px-4 pb-10 pt-8 sm:px-6 lg:px-8 xl:gap-10">
@@ -366,10 +221,97 @@ export default function HomePage() {
 
         <section className="min-w-0 flex-1 xl:max-w-[926px]">
           <div className="space-y-10 rounded-[32px] bg-transparent xl:pl-8">
-            <ProductSection products={hotOffers} showRail title="Hot Offers" />
-            <ProductSection products={forYou} title="For You" />
-            <ProductSection products={beverages} title="Beverages" />
-            <ProductSection products={snacks} title="Snacks" />
+            <section className="space-y-6">
+              <h2
+                className={cn(
+                  oranienbaum.className,
+                  "text-[40px] text-[#1f1f1f]",
+                )}
+              >
+                Menu Highlights
+              </h2>
+              <div className="overflow-x-auto pb-3">
+                <div className="flex min-w-max gap-4">
+                  {loading ? (
+                    <article className="w-[272px] shrink-0 animate-pulse rounded-[16px] bg-[#fafafa] p-2 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
+                      <div className="relative h-48 overflow-hidden rounded-[12px] bg-slate-200"></div>
+                      <div className="rounded-[12px] px-3 py-2 mt-4 space-y-4">
+                        <div className="h-6 w-3/4 bg-slate-200 rounded"></div>
+                        <div className="h-4 w-1/2 bg-slate-200 rounded"></div>
+                        <div className="mt-6 flex items-end justify-between gap-4">
+                          <div className="h-6 w-1/3 bg-slate-200 rounded"></div>
+                          <div className="h-8 w-24 bg-slate-200 rounded-[24px]"></div>
+                        </div>
+                      </div>
+                    </article>
+                  ) : (
+                    items.map((item) => (
+                      <article
+                        key={item.skuCode}
+                        className="w-[272px] shrink-0 rounded-[16px] bg-[#fafafa] p-2 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
+                      >
+                        <div className="relative h-48 overflow-hidden rounded-[12px] bg-[#aeaeae]">
+                          <img
+                            alt={item.name}
+                            className="absolute inset-0 h-full w-full object-cover"
+                            src={assets.image16}
+                          />
+                        </div>
+                        <div className="rounded-[12px] px-3 py-2">
+                          <div className="space-y-4">
+                            <div className="space-y-1">
+                              <h3
+                                className={cn(
+                                  oranienbaum.className,
+                                  "text-[20px] text-[#1f1f1f]",
+                                )}
+                              >
+                                {item.name}
+                              </h3>
+                              <p className="text-[14px] text-[#5f5f5f]">
+                                Fresh & delicious
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-1 text-[#5f5f5f]">
+                              <span className="icon-light material-symbols-outlined text-[24px]">
+                                local_fire_department
+                              </span>
+                              <p className="text-[14px] font-medium">
+                                {item.calories || item.calories || 0} kcal
+                              </p>
+                            </div>
+                          </div>
+                          <div className="mt-6 flex items-end justify-between gap-4">
+                            <div>
+                              {item.discountApplied ? (
+                                <p className="text-[10px] font-semibold text-[#5f5f5f] line-through">
+                                  {formatCurrency(item.basePrice)}
+                                </p>
+                              ) : null}
+                              <p className="mt-0.5 text-[20px] font-semibold text-[#1f1f1f]">
+                                {formatCurrency(item.currentPrice)}
+                              </p>
+                            </div>
+                            <Button
+                              className="min-h-0 rounded-[24px] px-4 py-1.5 text-[14px]"
+                              endIcon={
+                                <span className="icon-light material-symbols-outlined text-[20px]">
+                                  add
+                                </span>
+                              }
+                              size="sm"
+                              onClick={() => addToCart(item)}
+                            >
+                              Add to cart
+                            </Button>
+                          </div>
+                        </div>
+                      </article>
+                    ))
+                  )}
+                </div>
+              </div>
+            </section>
           </div>
         </section>
 
@@ -377,14 +319,26 @@ export default function HomePage() {
           <div className="space-y-8">
             <section className="overflow-hidden rounded-[24px] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
               <div className="flex items-center justify-between bg-linear-to-b from-[#db7741] to-[#f45d0c] px-6 py-4 text-white">
-                <h2 className={cn(oranienbaum.className, "text-[32px] leading-none")}>
+                <h2
+                  className={cn(
+                    oranienbaum.className,
+                    "text-[32px] leading-none",
+                  )}
+                >
                   Today&apos;s Flash Sale
                 </h2>
-                <span className="icon-light material-symbols-outlined text-[32px]">bolt</span>
+                <span className="icon-light material-symbols-outlined text-[32px]">
+                  bolt
+                </span>
               </div>
               <div className="space-y-5 px-6 py-4">
                 <div className="space-y-2">
-                  <h3 className={cn(oranienbaum.className, "text-[20px] text-[#1f1f1f]")}>
+                  <h3
+                    className={cn(
+                      oranienbaum.className,
+                      "text-[20px] text-[#1f1f1f]",
+                    )}
+                  >
                     Nasi Ayam Geprek
                   </h3>
                   <div className="space-y-1 text-[14px] text-[#5f5f5f]">
@@ -394,7 +348,9 @@ export default function HomePage() {
                     </div>
                     <div className="flex items-center justify-between gap-4">
                       <p>Contains</p>
-                      <p className="text-right">Fried chicken, lalapan, sambal</p>
+                      <p className="text-right">
+                        Fried chicken, lalapan, sambal
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -412,42 +368,65 @@ export default function HomePage() {
             <section className="rounded-[24px] bg-white px-6 py-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
               <div className="flex items-center justify-between">
                 <div className="flex items-end gap-1">
-                  <h2 className={cn(oranienbaum.className, "text-[32px] text-[#1f1f1f]")}>
+                  <h2
+                    className={cn(
+                      oranienbaum.className,
+                      "text-[32px] text-[#1f1f1f]",
+                    )}
+                  >
                     My Cart
                   </h2>
-                  <span className="pb-1 text-[14px] text-[#5f5f5f]">(2)</span>
+                  <span className="pb-1 text-[14px] text-[#5f5f5f]">({totalQuantity})</span>
                 </div>
               </div>
 
               <div className="mt-6 space-y-6">
                 <div className="space-y-6">
-                  {cartItems.map((item) => (
-                    <CartItem key={`${item.title}-${item.finalPrice}`} {...item} />
-                  ))}
+                  {cart.length === 0 ? (
+                    <p className="text-[14px] text-[#5f5f5f] text-center italic py-4">Your cart is empty.</p>
+                  ) : (
+                    cart.map((item) => (
+                      <CartItem
+                        key={item.skuCode}
+                        item={item}
+                        onUpdateQuantity={updateQuantity}
+                        onRemove={removeCartItem}
+                      />
+                    ))
+                  )}
                 </div>
 
-                <div className="h-px bg-[#eeeeee]" />
+                {cart.length > 0 && (
+                  <>
+                    <div className="h-px bg-[#eeeeee]" />
 
-                <div className="space-y-6">
-                  <div className="space-y-2.5 text-[14px] text-[#5f5f5f]">
-                    <div className="flex items-center justify-between">
-                      <p>Normal Price</p>
-                      <p>Rp20000</p>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <p>Discount</p>
-                      <p>Rp-5000</p>
-                    </div>
-                    <div className="flex items-center justify-between text-[#1f1f1f]">
-                      <p>Total</p>
-                      <p className="text-[24px] font-semibold">Rp15000</p>
-                    </div>
-                  </div>
+                    <div className="space-y-6">
+                      <div className="space-y-2.5 text-[14px] text-[#5f5f5f]">
+                        <div className="flex items-center justify-between">
+                          <p>Normal Price</p>
+                          <p>{formatCurrency(normalPriceTotal)}</p>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <p>Discount</p>
+                          <p>{discountTotal > 0 ? "-" : ""}{formatCurrency(discountTotal)}</p>
+                        </div>
+                        <div className="flex items-center justify-between text-[#1f1f1f]">
+                          <p>Total</p>
+                          <p className="text-[24px] font-semibold">{formatCurrency(finalTotal)}</p>
+                        </div>
+                      </div>
 
-                  <Button className="w-full rounded-[24px] text-[14px]" size="md">
-                    Confirm Order
-                  </Button>
-                </div>
+                      <Button
+                        className="w-full rounded-[24px] text-[14px]"
+                        size="md"
+                        onClick={handleConfirmOrder}
+                        disabled={isConfirming}
+                      >
+                        {isConfirming ? "Confirming..." : "Confirm Order"}
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
             </section>
           </div>
