@@ -13,8 +13,10 @@ export type ButtonVariant =
 
 export type ButtonSize = "sm" | "md" | "lg";
 
-export interface ButtonProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+export interface ButtonProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "children"
+> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;
@@ -26,11 +28,11 @@ export interface ButtonProps
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-linear-to-b from-[#db7741] to-[#f45d0c] text-white shadow-[0_10px_24px_rgba(244,93,12,0.28),inset_0_1px_0_rgba(255,255,255,0.15)] hover:from-[#e17f48] hover:to-[#ff6a1d]",
+    "bg-linear-to-b from-[#db7741] to-[#f45d0c] text-white hover:from-[#e17f48] hover:to-[#ff6a1d]",
   success:
     "bg-emerald-500 text-white shadow-[0_10px_24px_rgba(16,185,129,0.26),inset_0_1px_0_rgba(255,255,255,0.12)] hover:bg-emerald-400",
   secondary:
-    "border border-[#ececec] bg-white text-[#1f1f1f] shadow-[0_8px_24px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.8)] hover:bg-[#fafafa]",
+    "border border-[#ececec] bg-white text-[#1f1f1f] hover:bg-[#fafafa]",
   emerald:
     "bg-emerald-500 text-white shadow-[0_10px_24px_rgba(16,185,129,0.26),inset_0_1px_0_rgba(255,255,255,0.12)] hover:bg-emerald-400",
   slate:
@@ -68,7 +70,7 @@ export function Button({
         "inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-transparent font-medium tracking-[0.01em] transition duration-200 ease-out outline-none focus-visible:ring-2 focus-visible:ring-orange-300/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-60",
         sizeStyles[size],
         variantStyles[variant],
-        className
+        className,
       )}
       disabled={isDisabled}
       type={type}
